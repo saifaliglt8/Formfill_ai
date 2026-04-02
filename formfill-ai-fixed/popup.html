@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormFill AI</title>
+  <!-- Fix #2: paths are relative to extension root, not src/popup/ -->
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="6" y1="7"  x2="14" y2="7"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="6" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="6" y1="13" x2="10" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="15" cy="13" r="3" fill="#22c55e"/>
+          </svg>
+        </div>
+        <span class="app-name">FormFill AI</span>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="btn-settings" title="Settings">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6.5 1.5H9.5V3A5 5 0 0 1 11.2 3.8L12.5 2.5L14.5 4.5L13.2 5.8A5 5 0 0 1 13.5 7.5V9.5A5 5 0 0 1 13.2 11.2L14.5 12.5L12.5 14.5L11.2 13.2A5 5 0 0 1 9.5 13.5H6.5A5 5 0 0 1 4.8 13.2L3.5 14.5L1.5 12.5L2.8 11.2A5 5 0 0 1 2.5 9.5V7.5A5 5 0 0 1 2.8 5.8L1.5 4.5L3.5 2.5L4.8 3.8A5 5 0 0 1 6.5 3V1.5Z"
+              stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.3"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── No Profile state ── -->
+    <div id="state-no-profile" class="state hidden">
+      <div class="empty-state">
+        <div class="empty-icon">📄</div>
+        <h2>No profile yet</h2>
+        <p>Upload your CV to get started. FormFill AI will extract your information and intelligently fill job application forms.</p>
+        <label class="btn btn-primary upload-label" for="cv-upload">
+          Upload CV
+          <input type="file" id="cv-upload" accept=".pdf,.docx,.doc,.txt" class="hidden" />
+        </label>
+        <p class="hint">Supports PDF, DOCX, and TXT files</p>
+      </div>
+    </div>
+
+    <!-- ── Loading state ── -->
+    <div id="state-loading" class="state hidden">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p id="loading-message">Parsing your CV…</p>
+      </div>
+    </div>
+
+    <!-- ── Main state (profile exists) ── -->
+    <div id="state-main" class="state hidden">
+
+      <!-- Profile summary card -->
+      <div class="profile-card">
+        <div class="profile-avatar" id="profile-avatar">?</div>
+        <div class="profile-info">
+          <div class="profile-name"  id="profile-name">—</div>
+          <div class="profile-email" id="profile-email">—</div>
+        </div>
+        <button class="icon-btn" id="btn-edit-profile" title="Edit profile">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M9.5 2.5L11.5 4.5L4.5 11.5H2.5V9.5L9.5 2.5Z"
+              stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Current page info -->
+      <div class="page-info">
+        <span class="page-domain" id="page-domain">—</span>
+        <span class="field-badge hidden" id="field-count-badge">0 fields</span>
+      </div>
+
+      <!-- Scan button -->
+      <button class="btn btn-primary btn-full" id="btn-scan">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="11" y1="11" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Scan this page
+      </button>
+
+      <!-- Scan results -->
+      <div id="scan-results" class="hidden">
+        <div class="section-header">
+          <span class="section-title">Suggested answers</span>
+          <span class="needs-review-badge hidden" id="needs-review-count">0 need review</span>
+        </div>
+        <div id="mappings-preview" class="mappings-preview"></div>
+        <div class="action-row">
+          <button class="btn btn-ghost btn-sm" id="btn-review-all">Review all</button>
+          <button class="btn btn-primary btn-sm" id="btn-apply">Apply to form</button>
+        </div>
+      </div>
+
+      <!-- No fields found -->
+      <div id="no-fields-found" class="hidden">
+        <div class="empty-inline">
+          <span>No form fields detected on this page.</span>
+          <span class="hint">Try scrolling to reveal the form, then scan again.</span>
+        </div>
+      </div>
+
+      <!-- Status message -->
+      <div id="status-msg" class="status-msg hidden"></div>
+
+      <!-- Footer actions -->
+      <div class="footer-actions">
+        <label class="btn btn-ghost btn-sm upload-label" for="cv-upload-replace">
+          Replace CV
+          <input type="file" id="cv-upload-replace" accept=".pdf,.docx,.doc,.txt" class="hidden" />
+        </label>
+        <button class="btn btn-ghost btn-sm btn-danger" id="btn-clear-profile">Clear profile</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Fix #2: path is relative to extension root after webpack copy -->
+  <script src="dist/popup.js"></script>
+</body>
+</html>

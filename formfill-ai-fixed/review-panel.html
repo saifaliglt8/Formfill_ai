@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FormFill AI — Review</title>
+  <!-- Fix #2: paths are relative to extension root after webpack copy -->
+  <link rel="stylesheet" href="review-panel.css" />
+</head>
+<body>
+  <div id="panel">
+
+    <header class="panel-header">
+      <div class="panel-title">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M5 8.5L7 10.5L11 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Review Answers
+      </div>
+      <button class="close-btn" id="btn-close" title="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <line x1="2" y1="2"  x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="2" x2="2"  y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="panel-meta">
+      <span id="meta-filled">0 answers ready</span>
+      <span id="meta-review" class="tag-review hidden">0 need review</span>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="tab active" data-filter="all">All</button>
+      <button class="tab" data-filter="review">Needs review</button>
+      <button class="tab" data-filter="skipped">Skipped</button>
+    </div>
+
+    <div id="field-list" class="field-list"></div>
+
+    <div class="panel-footer">
+      <button class="btn-secondary" id="btn-cancel">Cancel</button>
+      <button class="btn-apply"     id="btn-apply-all">Apply to form</button>
+    </div>
+
+  </div>
+  <!-- Fix #2: path is relative to extension root -->
+  <script src="dist/review-panel.js"></script>
+</body>
+</html>

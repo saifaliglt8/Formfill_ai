@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FormFill AI — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="page">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="3" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="6" y1="7"  x2="14" y2="7"  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="6" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="6" y1="13" x2="10" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="15" cy="13" r="3" fill="#22c55e"/>
+        </svg>
+        FormFill AI
+      </div>
+      <nav>
+        <a class="nav-item active" data-section="profile">Profile</a>
+        <a class="nav-item"        data-section="api">API Key</a>
+        <a class="nav-item"        data-section="behavior">Behavior</a>
+      </nav>
+    </aside>
+
+    <!-- ── Main content ── -->
+    <main class="content">
+
+      <!-- ── Profile section ── -->
+      <section id="section-profile" class="section active">
+        <h1>Your Profile</h1>
+        <p class="section-desc">
+          Review and edit the information FormFill AI uses to fill forms.
+          Changes are saved when you click <strong>Save profile</strong>.
+        </p>
+
+        <!-- CV upload zone -->
+        <div class="cv-upload-zone" id="cv-drop-zone">
+          <input type="file" id="cv-file" accept=".pdf,.docx,.doc,.txt" class="hidden-input" />
+          <div class="upload-icon">📄</div>
+          <p><strong>Upload or drop your CV here</strong></p>
+          <p class="dim">PDF, DOCX, or TXT &middot; up to 5 MB</p>
+          <button class="btn-outline" id="btn-upload-cv">Choose file</button>
+        </div>
+
+        <!-- Profile loading indicator -->
+        <div id="profile-loading" class="loading-row hidden">
+          <div class="spinner"></div>
+          <span id="profile-loading-msg">Parsing CV…</span>
+        </div>
+
+        <!-- Profile form (shown once a profile exists) -->
+        <!-- Parse method banner — shown after CV upload -->
+        <div id="parse-method-banner" class="parse-banner" style="display:none"></div>
+
+        <div id="profile-form" class="profile-form hidden">
+
+          <h3>Personal</h3>
+          <div class="form-group">
+            <label for="pf-fullname">Full name</label>
+            <input type="text" id="pf-fullname" placeholder="Jane Smith" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pf-firstname">First name</label>
+              <input type="text" id="pf-firstname" placeholder="Jane" />
+            </div>
+            <div class="form-group">
+              <label for="pf-lastname">Last name</label>
+              <input type="text" id="pf-lastname" placeholder="Smith" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pf-email">Email</label>
+              <input type="email" id="pf-email" placeholder="jane@example.com" />
+            </div>
+            <div class="form-group">
+              <label for="pf-phone">Phone</label>
+              <input type="tel" id="pf-phone" placeholder="+1 555 000 0000" />
+            </div>
+          </div>
+
+          <h3>Address</h3>
+          <div class="form-group">
+            <label for="pf-street">Street</label>
+            <input type="text" id="pf-street" placeholder="123 Main St" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pf-city">City</label>
+              <input type="text" id="pf-city" />
+            </div>
+            <div class="form-group">
+              <label for="pf-state">State / Province</label>
+              <input type="text" id="pf-state" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pf-country">Country</label>
+              <input type="text" id="pf-country" />
+            </div>
+            <div class="form-group">
+              <label for="pf-postal">Postal code</label>
+              <input type="text" id="pf-postal" />
+            </div>
+          </div>
+
+          <h3>Links</h3>
+          <div class="form-group">
+            <label for="pf-linkedin">LinkedIn URL</label>
+            <input type="url" id="pf-linkedin" placeholder="https://linkedin.com/in/…" />
+          </div>
+          <div class="form-group">
+            <label for="pf-github">GitHub URL</label>
+            <input type="url" id="pf-github" placeholder="https://github.com/…" />
+          </div>
+          <div class="form-group">
+            <label for="pf-portfolio">Portfolio / Website</label>
+            <input type="url" id="pf-portfolio" placeholder="https://…" />
+          </div>
+
+          <h3>Professional Summary</h3>
+          <div class="form-group">
+            <textarea
+              id="pf-summary"
+              rows="4"
+              placeholder="Brief professional summary used for cover letter / about-me fields…"
+            ></textarea>
+          </div>
+
+          <h3>Skills</h3>
+          <div class="form-group">
+            <input
+              type="text"
+              id="pf-skills"
+              placeholder="Python, React, TypeScript, AWS … (comma-separated)"
+            />
+          </div>
+
+          <h3>Custom fields</h3>
+          <p class="dim" style="margin-bottom:10px">
+            Add any extra information (e.g. "visa status: US Citizen", "notice period: 2 weeks").
+          </p>
+          <div id="custom-fields-list"></div>
+          <button class="btn-outline btn-add-custom" id="btn-add-custom">+ Add field</button>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="btn-save-profile">Save profile</button>
+            <span id="save-status" class="save-status hidden">Saved ✓</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ── API Key section ── -->
+      <section id="section-api" class="section hidden">
+        <h1>Gemini API Key</h1>
+        <p class="section-desc">
+          FormFill AI uses Google Gemini to map form fields to your profile.
+          Your key is stored locally and only sent to Google's API.
+        </p>
+
+        <div class="card">
+          <div class="form-group">
+            <label for="api-key-input">API key</label>
+            <div class="key-input-row">
+              <input
+                type="password"
+                id="api-key-input"
+                placeholder="AIza…"
+                autocomplete="off"
+              />
+              <button class="btn-outline" id="btn-toggle-key">Show</button>
+            </div>
+            <p class="dim" style="margin-top:6px">
+              Get a free key at
+              <a href="https://aistudio.google.com/app/apikey" target="_blank">
+                aistudio.google.com
+              </a>
+            </p>
+          </div>
+
+          <div class="form-group" style="margin-top:14px">
+            <label>Gemini model</label>
+            <select id="gemini-model-select">
+              <option value="gemini-1.5-flash">gemini-1.5-flash — Free: 1,500 req/day (recommended)</option>
+              <option value="gemini-1.5-flash-8b">gemini-1.5-flash-8b — Free: 1,500 req/day (fastest)</option>
+              <option value="gemini-1.5-pro">gemini-1.5-pro — Free: 50 req/day (most accurate)</option>
+              <option value="gemini-2.0-flash">gemini-2.0-flash — Paid only (may error on free tier)</option>
+            </select>
+            <p class="dim">If you see quota errors, switch to gemini-1.5-flash which has a larger free allowance.</p>
+          </div>
+
+          <div id="api-test-result" class="test-result hidden"></div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="btn-save-key">Save key</button>
+            <button class="btn-outline" id="btn-test-key">Test connection</button>
+            <span id="key-saved-status" class="save-status hidden">Saved ✓</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Behavior section ── -->
+      <section id="section-behavior" class="section hidden">
+        <h1>Behavior</h1>
+        <p class="section-desc">Control how FormFill AI detects and fills forms.</p>
+
+        <div class="settings-group">
+          <div class="setting-row">
+            <div class="setting-info">
+              <strong>Skip already-filled fields</strong>
+              <span class="dim">Do not overwrite values already present on the page.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="setting-skip-filled" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <strong>Show confidence scores</strong>
+              <span class="dim">Display % confidence next to each suggested value in the popup.</span>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="setting-show-confidence" />
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <strong>Confidence threshold</strong>
+              <span class="dim">Fields below this confidence are flagged for review.</span>
+            </div>
+            <div class="range-row">
+              <input type="range" id="setting-threshold" min="40" max="95" step="5" />
+              <span id="threshold-label" class="range-label">70%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-settings">Save settings</button>
+          <span id="settings-status" class="save-status hidden">Saved ✓</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="dist/options.js"></script>
+</body>
+</html>
